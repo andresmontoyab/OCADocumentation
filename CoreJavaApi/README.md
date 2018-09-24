@@ -720,4 +720,362 @@ words, an ArrayList is a List.
 ArrayList has many methods, but you only need to know a handful of them—even fewer
 than you did for String and StringBuilder
 
-	
+## add()
+
+The add() methods insert a new value in the ArrayList. The method signatures are as follows:
+
+	boolean add(E element) 
+	void add(int index, E element)
+
+	ArrayList list = new ArrayList(); 
+	list.add("hawk");          // [hawk]
+	list.add(Boolean.TRUE);    // [hawk, true] 
+	System.out.println(list);  // [hawk, true]
+
+add() does exactly what we expect: it stores the String in the no longer empty ArrayList. It then does the same thing for the boolean. This is okay because we didn’t specify a type for ArrayList; therefore, the type is Object, which includes everything except primitives.
+
+	ArrayList<String> safer = new ArrayList<>(); 
+	safer.add("sparrow"); 
+	safer.add(Boolean.TRUE);    // DOES NOT COMPILE
+
+This time the compiler knows that only String objects are allowed in and prevents the attempt to add a boolean. Now let’s try adding multiple values to different positions.
+
+	4: List<String> birds = new ArrayList<>();
+	5: birds.add("hawk");            // [hawk] 
+	6: birds.add(1, "robin");        // [hawk, robin] 
+	7: birds.add(0, "blue jay");     // [blue jay, hawk, robin] 
+	8: birds.add(1, "cardinal");     // [blue jay, cardinal, hawk, robin] 
+	9: System.out.println(birds);    // [blue jay, cardinal, hawk, robin]
+
+## remove()
+
+remove() The remove() methods remove the fi rst matching value in the ArrayList or remove the element at a specifi ed index. The method signatures are as follows:
+
+	boolean remove(Object object) 
+	E remove(int index)
+
+This time the boolean return value tells us whether a match was removed. The E return type is the element that actually got removed. The following shows how to use these methods:
+
+	3: List<String> birds = new ArrayList<>(); 
+	4: birds.add("hawk");     // [hawk] 
+	5: birds.add("hawk");     // [hawk, hawk] 
+	6: System.out.println(birds.remove("cardinal")); // prints false 
+	7: System.out.println(birds.remove("hawk")); // prints true
+	8: System.out.println(birds.remove(0)); // prints hawk 
+	9: System.out.println(birds);     // []
+
+## set()
+
+The set() method changes one of the elements of the ArrayList without changing the size. The method signature is as follows:
+
+	E set(int index, E newElement)
+
+The E return type is the element that got replaced. The following shows how to use this method:
+
+	15: List<String> birds = new ArrayList<>(); 
+	16: birds.add("hawk");                    // [hawk] 
+	17: System.out.println(birds.size());     // 1 
+	18: birds.set(0, "robin");               // [robin] 
+	19: System.out.println(birds.size());     // 1 
+	20: birds.set(1, "robin");               // IndexOutOfBoundsException
+
+## isEmpty() and size().
+
+The isEmpty() and size() methods look at how many of the slots are in use. The method signatures are as follows:
+
+	boolean isEmpty() int size()
+
+The following shows how to use these methods:
+
+	System.out.println(birds.isEmpty());     // true 
+	System.out.println(birds.size());     // 0 
+	birds.add("hawk");                    // [hawk] 
+	birds.add("hawk");                    // [hawk, hawk]
+	System.out.println(birds.isEmpty());     // false 
+	System.out.println(birds.size());     // 2
+
+## clear()
+
+The clear() method provides an easy way to discard all elements of the ArrayList. The method signature is as follows:
+void clear()
+
+The following shows how to use this method:
+
+	List<String> birds = new ArrayList<>(); 
+	birds.add("hawk");                    // [hawk] 
+	birds.add("hawk");                    // [hawk, hawk] 
+	System. out .println(birds.isEmpty());     // false 
+	System. out .println(birds.size());     // 2 
+	birds.clear();                         // [] 
+	System. out .println(birds.isEmpty());     // true 
+	System.out.println(birds.size());     // 0
+
+After we call clear(), birds is back to being an empty ArrayList of size 0.
+
+## contains()
+
+The contains() method checks whether a certain value is in the ArrayList. The method signature is as follows:
+
+	boolean contains(Object object)
+
+The following shows how to use this method:
+
+	List<String> birds = new ArrayList<>(); 
+	birds.add("hawk");                         // [hawk] 
+	System.out.println(birds.contains("hawk")); // true 
+	.out.println(birds.contains("robin")); // false
+
+
+##equals()
+
+Finally, ArrayList has a custom implementation of equals() so you can compare two lists to see if they contain the same elements in the same order.
+
+	boolean equals(Object object)
+
+The following shows an example:
+
+	31: List<String> one = new ArrayList<>(); 
+	32: List<String> two = new ArrayList<>(); 
+	33: System.out.println(one.equals(two));      // true 
+	34: one.add("a");                         // [a] 
+	35: System.out.println(one.equals(two));     // false 
+	36: two.add("a");                         // [a] 
+	37: System.out.println(one.equals(two));     // true 
+	38: one.add("b");                         // [a,b] 
+	39: two.add(0, "b");                    // [b,a] 
+	40: System.out.println(one.equals(two));     // false
+
+## Wrapper Classes.
+
+What happens if we want to put primitives in? Each primitive type has a wrapper class, which is an object type that corresponds to the primitive.
+
+	Primitive Type      ||          Wrapper Class                || Example of constructing.
+	boolean             || 			Boolean 					 || new Boolean(true)
+	byte             	|| 			Byte 						 || new Byte((byte) 1))
+	short             	|| 			Short 						 || new Short(short) 1)
+	long             	|| 			Integer 					 || new Integer(1)
+	float             	|| 			Float 						 || new Float(1.0)
+	double             	|| 			Long 						 || new Long(1)
+	int             	|| 			Double 	 					 || new Double(1.0)
+	char             	|| 			Character  					 || new Character('c')	 
+
+ The wrapper classes also have a method that converts back to a primitive.
+
+ There are also methods for converting a String to a primitive or wrapper class. You do need to know these methods. The parse methods, such as parseInt(), return a primitive, and the valueOf() method returns a wrapper class.
+
+	int primitive = Integer.parseInt("123"); 
+	Integer wrapper = Integer.valueOf("123");
+
+If the String passed in is not valid for the given type, Java throws an exception
+
+	int bad1 = Integer.parseInt("a");               // throws NumberFormatException 
+	Integer bad2 = Integer.valueOf("123.45");       // throws NumberFormatException
+
+	Wrapper class 			|| Converting String to primitive 		|| Converting String to wrapper class
+	Boolean 				|| Boolean.parseBoolean("true"); 		|| Boolean.valueOf("TRUE");
+	Byte 					|| Byte.parseByte("1"); 				|| Byte.valueOf("2");
+	Short 					|| Short.parseShort("1"); 				|| Short.valueOf("2");
+	Integer 				|| Integer.parseInt("1"); 				|| Integer.valueOf("2");
+	Long 					|| Long.parseLong("1"); 				|| Long.valueOf("2");
+	Float 					|| Float.parseFloat("1"); 				|| Float.valueOf("2.2");
+	Double 					|| Double.parseDouble("1");				|| Double.valueOf("2.2");
+	Character 				|| None 								|| None
+
+Also, the Character class doesn’t participate in the parse/ valueOf methods. Since a String is made up of characters, you can just call charAt() normally. 
+
+## Autoboxing.
+
+Why won’t you need to be concerned with whether a primitive or wrapper class is returned, you ask? Since Java 5, you can just type the primitive value and Java will convert it to the relevant wrapper class for you. 
+
+	4: List<Double> weights = new ArrayList<>(); 
+	5: weights.add(50.5);               // [50.5] 
+	6: weights.add(new Double(60));     // [50.5, 60.0] 
+	7: weights.remove(50.5);               // [60.0] 
+	8: double first = weights.get(0);     // 60.0
+
+Be careful when autoboxing into Integer. What do you think this code outputs?
+
+	List<Integer> numbers = new ArrayList<>(); 
+	numbers.add(1); 
+	numbers.add(2); 
+	numbers.remove(1); 
+	System.out.println(numbers);
+
+ If you want to remove the 2, you can write numbers.remove(new Integer(2)) to force wrapper class use. 
+
+## Converting Between array and List.
+
+You should know how to convert between an array and an ArrayList. Let’s start with turning an ArrayList into an array:
+
+	3: List<String> list = new ArrayList<>(); 
+	4: list.add("hawk");
+	5: list.add("robin"); 
+	6: Object[] objectArray = list.toArray(); 
+	7: System.out.println(objectArray.length);     // 2 
+	8: String[] stringArray = list.toArray(new String[0]); 
+	9: System.out.println(stringArray.length);     // 2
+
+Converting from an array to a List is more interesting. The original array and created array backed List are linked. When a change is made to one, it is available in the other.
+
+	20: String[] array = { "hawk", "robin" };     // [hawk, robin] 
+	21: List<String> list = Arrays.asList(array); // returns fixed size list
+	22: System.out.println(list.size());     // 2 
+	23: list.set(1, "test");          // [hawk, test] 
+	24: array[0] = "new";               // [new, test] 
+	25: for (String b : array) System.out.print(b + " "); // new test 
+	26: list.remove(1);     // throws UnsupportedOperation Exception
+
+## Sorting.
+
+Sorting an ArrayList is very similar to sorting an array. You just use a different helper class:
+
+	List<Integer> numbers = new ArrayList<>(); 
+	numbers.add(99); 
+	numbers.add(5); 
+	numbers.add(81); 
+	Collections.sort(numbers); 
+	System.out.println(numbers); [5, 81, 99]
+
+As you can see, the numbers got sorted, just like you’d expect. Isn’t it nice to have something that works just like you think it will
+
+## Working with Data and Times.
+
+As with an ArrayList, you need an import statement to work with the date and time classes. Most of them are in the java.time package. To use it, add this import to your program
+
+	import java.time.*;	import time classes.
+
+## Creating Date and Times.
+
+When working with dates and times, the first thing to do is decide how much information you need. The exam gives you three choices
+
+## LocalDate 
+
+Contains just a date - no time and no time zone.  A good example of LocalDate is your birthday this year.
+
+## LocalTime 
+
+Contains just a time—no date and no time zone. A good example of LocalTime is midnight. It is midnight at the same time every day
+
+## LocalDateTime
+
+Contains both a date and time but no time zone. A good example of LocalDateTime is “the stroke of midnight on New Year’s.” 
+
+	System.out.println(LocalDate.now());   // Date
+	System.out.println(LocalTime.now()); 	// Time
+	System.out.println(LocalDateTime.now()); // Both
+
+
+	2018-09-24
+	17:50:52.037
+	2018-09-24T17:50:52.037
+
+## Creating Dates.
+
+Method Signature 
+
+	public static LocalDate of(int year, int month, int dayOfMonth) 
+	public static LocalDate of(int year, Month month, int dayOfMonth)
+
+Examples 
+
+	LocalDate date1 = LocalDate.of(2015, Month.JANUARY, 20); 
+	LocalDate date2 = LocalDate.of(2015, 1, 20);
+
+Both pass in the year, month, and date. Although it is good to use the Month constants (to make the code easier to read), you can pass the int number of the month directly.
+
+## Creating a Time
+
+When creating a time, you can choose how detailed you want to be. You can specify just the hour and minute, or you can add the number of seconds. You can even add nanoseconds if you want to be very precise.
+
+Method Signature.
+
+	public static LocalTime of(int hour, int minute)
+	public static LocalTime of(int hour, int minute, int second) 
+	public static LocalTime of(int hour, int minute, int second, int nanos)
+
+
+## Creating DateTime
+
+	LocalDateTime dateTime1 = LocalDateTime.of(2015, Month.JANUARY, 20, 6, 15, 30); 
+	LocalDateTime dateTime2 = LocalDateTime.of(date1, time1);
+
+Method Signature.
+
+	public static LocalDateTime of(int year, int month,   int dayOfMonth, int hour, int minute) 
+	public static LocalDateTime of(int year, int month,   int dayOfMonth, int hour, int minute, int second) 
+	public static LocalDateTime of(int year, int month,   int dayOfMonth, int hour, int minute, int second, int nanos) 
+	public static LocalDateTime of(int year, Month month,   int dayOfMonth, int hour, int minute) 
+	public static LocalDateTime of(int year, Month month,   int dayOfMonth, int hour, int minute, int second) 
+	public static LocalDateTime of(int year, Month month,   int dayOfMonth, int hour, int minute, int second, int nanos) 
+	public static LocalDateTime of(LocalDate date, LocalTime)
+
+Did you notice that we did not use a constructor in any of the examples? The date and time classes have private constructors to force you to use the static methods. The exam creators may try to throw something like this at you:
+
+	LocalDate d = new LocalDate(); // DOES NOT COMPILE
+
+Don’t fall for this. You are not allowed to construct a date or time object directly. Another trick is to see what happens when you pass invalid numbers to of(). For example:
+
+	LocalDate.of(2015, Month.JANUARY, 32)     // throws DateTimeException
+
+## Old way Vs New Way
+
+// Put Image.
+
+You can see some of the problems with the “old way” in the following table. There wasn’t a way to specify just a date without the time. The Date class represented both the date and time whether you wanted it to or not. Trying to create a speciﬁ c date required more code than it should have. Month indexes were 0 based instead of 1 based, which was confusing. 
+
+## Manipuling Dates and Times.
+
+Adding to a date is easy. The date and time classes are immutable, just like String was. This means that we need to remember to assign the results of these methods to a reference variable so they are not lost.
+
+	12: LocalDate date = LocalDate.of(2014, Month.JANUARY, 20); 
+	13: System.out.println(date);          // 2014-01-20 
+	14: date = date.plusDays(2); 
+	15: System.out.println(date);          // 2014-01-22 
+	16: date = date.plusWeeks(1);
+	17: System.out.println(date);          // 2014-01-29 
+	18: date = date.plusMonths(1); 
+	19: System.out.println(date);          // 2014-02-28 
+	20: date = date.plusYears(5); 
+	21: System.out.println(date);          // 2019-02-28
+
+There are also nice easy methods to go backward in time. This time, let’s work with LocalDateTime.
+
+	22: LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	23: LocalTime time = LocalTime.of(5, 15); 
+	24: LocalDateTime dateTime = LocalDateTime.of(date, time); 
+	25: System.out.println(dateTime);          // 2020-01-20T05:15 
+	26: dateTime = dateTime.minusDays(1); 
+	27: System.out.println(dateTime);          // 2020-01-19T05:15 
+	28: dateTime = dateTime.minusHours(10); 
+	29: System.out.println(dateTime);          // 2020-01-18T19:15 
+	30: dateTime = dateTime.minusSeconds(30); 
+	31: System.out.println(dateTime);          // 2020-01-18T19:14:30
+
+It is common for date and time methods to be chained. For example, without the print statements, the previous example could be rewritten as follows:
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	LocalTime time = LocalTime.of(5, 15); 
+	LocalDateTime dateTime = LocalDateTime.of(date2, time).minusDays(1).minusHours(10).minusSeconds(30);
+
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	date.plusDays(10); 
+	System.out.println(date);
+
+It prints January 20, 2020. Adding 10 days was useless because we ignored the result. Whenever you see immutable types, pay attention to make sure the return value of a method call isn’t ignored. 
+
+The exam also may test to see if you remember what each of the date and time objects includes. Do you see what is wrong here?
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	date = date.plusMinutes(1);     // DOES NOT COMPILE
+
+LocalDate does not contain time. This means you cannot add minutes to it..
+
+
+
+
+
+
+
+
+

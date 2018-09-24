@@ -243,7 +243,7 @@ You won’t be asked to identify whether custom classes are immutable on the exa
 		
 ## Method Chaining
 
-	It is common to call multiple methods on the same String, as shown here
+It is common to call multiple methods on the same String, as shown here
 	
 	String start = "AniMaL   ";
 	String trimmed = start.trim();                 // "AniMaL"
@@ -251,10 +251,10 @@ You won’t be asked to identify whether custom classes are immutable on the exa
 	String result = lowercase.replace('a', 'A');   // "Animal" 
 	System.out.println(result);
 	
-	This is just a series of String methods. Each time one is called, the returned value is put in a new variable. 
-	There are four String values along the way, and Animal is output.
+This is just a series of String methods. Each time one is called, the returned value is put in a new variable. 
+There are four String values along the way, and Animal is output.
 	
-	If you want to evade to create these four variables you cna use the method chaining.
+If you want to evade to create these four variables you cna use the method chaining.
 	
 	String result = "AniMaL   ".trim().toLowerCase().replace('a', 'A'); 
 	System.out.println(result);
@@ -266,8 +266,458 @@ You won’t be asked to identify whether custom classes are immutable on the exa
 	9: System.out.println("b=" + b);
 
 
+## Usign String BuilderClass
+
+A small program can create a lot of String objects very quickly. For example, how many
+do you think this piece of code creates?
+
+	10: String alpha = "";
+	11: for(char current = 'a'; current <= 'z'; current++)
+	12: alpha += current;
+	13: System.out.println(alpha)
+	
+This sequence of events continues, and after 26 iterations through the loop, a total of 27
+objects are instantiated, most of which are immediately eligible for garbage collection.
+This is very ineffi cient. Luckily, Java has a solution. The StringBuilder class
+creates a String without storing all those interim String values. Unlike the String class,
+StringBuilder is not immutable.
+
+	15: StringBuilder alpha = new StringBuilder();
+	16: for(char current = 'a'; current <= 'z'; current++)
+	17: alpha.append(current);
+	18: System.out.println(alpha);	
+
+## Mutability and Chaining 
+
+We’re sure you noticed this from the previous example, but StringBuilder is not immutable.
+In fact, we gave it 27 different values in the example (blank plus adding each
+letter in the alphabet)
+
+Chaining makes this even more interesting. When we chained String method calls, the
+result was a new String with the answer. Chaining StringBuilder objects doesn’t work
+this way. Instead, the StringBuilder changes its own state and returns a reference to itself! 
+
+	4: StringBuilder sb = new StringBuilder("start");
+	5: sb.append("+middle"); // sb = "start+middle"
+	6: StringBuilder same = sb.append("+end"); // "start+middle+end"
+		
+
+	4: StringBuilder a = new StringBuilder("abc");
+	5: StringBuilder b = a.append("de");
+	6: b = b.append("f").append("g");
+	7: System.out.println("a=" + a);
+	8: System.out.println("b=" + b);	
+
+## Creating String builder 
+
+StringBuilder sb1 = new StringBuilder();
+StringBuilder sb2 = new StringBuilder("animal");
+StringBuilder sb3 = new StringBuilder(10);
+
+## Size Vs Capacity.
+
+The behind-the-scenes process of how objects are stored isn’t on the exam, but some
+knowledge of this process may help you better understand and remember StringBuilder.
+Size is the number of characters currently in the sequence, and capacity is the number
+of characters the sequence can currently hold. Since a String is immutable, the size and
+capacity are the same. The number of characters appearing in the String is both the size
+and capacity.
+
+For StringBuilder, Java knows the size is likely to change as the object is used. When
+StringBuilder is constructed, it may start at the default capacity (which happens to be
+16) or one of the programmer’s choosing. In the example, we request a capacity of 5. At
+this point, the size is 0 since no characters have been added yet, but we have space for 5.
+
+Next we add four characters. At this point, the size is 4 since four slots are taken. The
+capacity is still 5. Then we add three more characters. The size is now 7 since we have
+used up seven slots. Because the capacity wasn’t large enough to store seven characters,
+Java automatically increased it for us.
+
+## Important StringBuilder Methods.
+
+charAt(), indexOf(), length(), and substring()
+
+These four methods work exactly the same as in the String class. Be sure you can identify
+the output of this example:
+
+	StringBuilder sb = new StringBuilder("animals");
+	String sub = sb.substring(sb.indexOf("a"), sb.indexOf("al"));
+	int len = sb.length();
+	char ch = sb.charAt(6);
+	System.out.println(sub + " " + len + " " + ch);
+
+## append()
+
+The append() method is by far the most frequently used method in StringBuilder. In fact,
+it is so frequently used that we just started using it without comment. Luckily, this method
+does just what it sounds like: it adds the parameter to the StringBuilder and returns a reference
+to the current StringBuilder
+
+	StringBuilder append(String str);
+
+	StringBuilder sb = new StringBuilder().append(1).append('c');
+	sb.append("-").append(true);
+	System.out.println(sb); // 1c-true
+
+## insert()	
+
+The insert() method adds characters to the StringBuilder at the requested index and
+returns a reference to the current StringBuilder
+
+	StringBuilder insert(int offset, String str)
+
+Pay attention to the offset in these examples. It is the index where we want to insert the
+requested parameter.
+
+	3: StringBuilder sb = new StringBuilder("animals");
+	4: sb.insert(7, "-"); // sb = animals-
+	5: sb.insert(0, "-"); // sb = -animals-
+	6: sb.insert(4, "-"); // sb = -ani-mals
+
+
+The exam creators will try to trip
+you up on this. As we add and remove characters, their indexes change. When you see a
+question dealing with such operations, draw what is going on so you won’t be confused.
+
+## delete() and deleteCharAt()
+
+The delete() method is the opposite of the insert() method. It removes characters from
+the sequence and returns a reference to the current StringBuilder. The deleteCharAt()
+method is convenient when you want to delete only one character
+
+	StringBuilder delete(int start, int end)
+	StringBuilder deleteCharAt(int index)
+
+The following code shows how to use these methods:
+
+	StringBuilder sb = new StringBuilder("abcdef");
+	sb.delete(1, 3); // sb = adef
+	sb.deleteCharAt(5); // throws an exception
+
+First, we delete the characters starting with index 1 and ending right before index 3. This
+gives us adef. Next, we ask Java to delete the character at position 5. However, the remaining
+value is only four characters long, so it throws a StringIndexOutOfBoundsException. 
+
+## reverse()
+
+After all that, it’s time for a nice, easy method. The reverse() method does just what it
+sounds like: it reverses the characters in the sequences and returns a reference to the current
+StringBuilder
+
+	StringBuilder reverse()
+
+The following code shows how to use this method:
+
+	StringBuilder sb = new StringBuilder("ABC");
+	sb.reverse();
+
+
+## toString()
+
+The last method converts a StringBuilder into a String. The method signature is as
+follows:
+
+	String toString()
+
+The following code shows how to use this method:
+
+	String s = sb.toString();
+
+Often StringBuilder is used internally for performance purposes but the end result
+needs to be a String. For example, maybe it needs to be passed to another method that is
+expecting a String
+
+## StringBuilder vs StringBuffer.
+
+When writing new code that concatenates a lot of String objects together, you should
+use StringBuilder. StringBuilder was added to Java in Java 5. If you come across older
+code, you will see StringBuffer used for this purpose. StringBuffer does the same thing
+but more slowly because it is thread safe.
+
+## Understandig Equality.
+
+In Chapter 2, you learned how to use == to compare numbers and that object references
+refer to the same object.
+
+Some examples of ==
+
+	StringBuilder one = new StringBuilder();
+	StringBuilder two = new StringBuilder();
+	StringBuilder three = one.append("a");
+	System.out.println(one == two); // false
+	System.out.println(one == three); // true
+
+
+	String x = "Hello World";
+	String y = "Hello World";
+	System.out.println(x == y); // true
+
+
+	String x = "Hello World";
+	String z = " Hello World".trim();
+	System.out.println(x == z); // false
+
+	String x = new String("Hello World");
+	String y = "Hello World";
+	System.out.println(x == y); // false
+
+The equal() application
+
+	String x = "Hello World";
+	String z = " Hello World".trim();
+	System.out.println(x.equals(z)); // true
+
+This works because the authors of the String class implemented a standard method
+called equals to check the values inside the String rather than the String itself
+
+If a class doesn’t have an equals method, Java determines whether the references point to the
+same object—which is exactly what == does.
+
+In case you are wondering, the authors of StringBuilder did not implement equals().
+
+	 public class Tiger {
+	2: String name;
+	3: public static void main(String[] args) {
+	4: Tiger t1 = new Tiger();
+	5: Tiger t2 = new Tiger();
+	6: Tiger t3 = t1;
+	7: System.out.println(t1 == t1); // true
+	8: System.out.println(t1 == t2); // false
+	9: System.out.println(t1.equals(t2)); // false
+	10: } }
+
+## Understanding Java Arrays.
+
+An array is an area of memory on the heap with space for a designated number of elements. A String is
+implemented as an array with some methods that you might want to use when dealing with
+characters specifi cally. A StringBuilder is implemented as an array where the array object is
+replaced with a new bigger array object when it runs out of space to store all the characters. A
+big difference is that an array can be of any other Java type.
+
+In other words, an array is an ordered list. It can contain duplicates. You will learn
+about data structures that cannot contain duplicates for the OCP exam.
+
+## Creating an Array of primitives.
+
+Creaing a empty array with three position.
+
+	int[] numbers1 = new int[3];
+
+When using this form to instantiate an array, set all the elements to the default value for
+that type.
+
+Creating an array with values.
+
+	int[] numbers2 = new int[] {42, 55, 99};
+
+Java recognizes that this expression is redundant. Since you are specifying the type of
+the array on the left side of the equal sign, Java already knows the type. And since you
+are specifying the initial values, it already knows the size. As a shortcut, Java lets you
+write this:
+
+	int[] numbers2 = {42, 55, 99};
+
+int[] numAnimals;
+int [] numAnimals2;
+int numAnimals3[];
+int numAnimals4 [];
+
+Most people use the fi rst one. You could see any of these on the exam, though, so get
+used to seeing the brackets in odd places.	
+
+## Creating an Array with Reference Variables
+
+You can choose any Java type to be the type of the array. This includes classes you create
+yourself. Let’s take a look at a built-in type with String:
+
+	public class ArrayType {
+	 public static void main(String args[]) {
+	 String [] bugs = { "cricket", "beetle", "ladybug" };
+	 String [] alias = bugs;
+	 System.out.println(bugs.equals(alias)); // true
+	 System.out.println(bugs.toString()); // [Ljava.lang.String;@160bc7c0
+	} }
+
+The array does not allocate space for the String
+objects. Instead, it allocates space for a reference to where the objects are really stored.
+
+what do you think this array points to??
+
+	class Names {
+	 String names[];
+	}
+
+
+	class Names {
+ 		String names[] = new String[2];
+		}
+
+
+	3: String[] strings = { "stringValue" };
+	4: Object[] objects = strings;
+	5: String[] againStrings = (String[]) objects;
+	6: againStrings[0] = new StringBuilder(); // DOES NOT COMPILE
+	7: objects[0] = new StringBuilder(); // careful!		
+
+Line 7 is where this gets interesting. From the point of view of the compiler, this is just
+fi ne. A StringBuilder object can clearly go in an Object[]. The problem is that we don’t
+actually have an Object[]. We have a String[] referred to from an Object[] variable. At
+runtime, the code throws an ArrayStoreException
+
+## Using Array
+
+Now that we know how to create an array, let’s try accessing one:
+
+	4: String[] mammals = {"monkey", "chimp", "donkey"};
+	5: System.out.println(mammals.length); // 3
+	6: System.out.println(mammals[0]); // monkey
+	7: System.out.println(mammals[1]); // chimp
+	8: System.out.println(mammals[2]); // donkey
+
+
+what do you think this prints?
+	
+	String[] birds = new String[6];
+	System.out.println(birds.length);
+
+The answer is 6. Even though all 6 elements of the array are null, there are still 6 of
+them. length does not consider what is in the array; it only considers how many slots have
+been allocated.
+
+## Sorting.
+
+Arrays is the fi rst class provided by Java we have used that requires an import. To use it,
+you must have either of the following two statements in your class:
+
+	import java.util.* // import whole package including Arrays
+	import java.util.Arrays; // import just Arrays
+
+
+	int[] numbers = { 6, 9, 1 };
+	Arrays.sort(numbers);
+	for (int i = 0; i < numbers.length; i++)
+	L System.out.print (numbers[i] + " "); // 1 6 9
+
+
+	String[] strings = { "10", "9", "100" };
+	Arrays.sort(strings);
+	for (String string : strings);
+	System.out.print(string + " ");
+
+This time the result might not be what you expect. This code outputs 10 100 9. The
+problem is that String sorts in alphabetic order, and 1 sorts before 9.
+
+## Searching.
+
+Java also provides a convenient way to search—but only if the array is already sorted. 	
+
+	3: int[] numbers = {2,4,6,8};
+	4: System.out.println(Arrays.binarySearch(numbers, 2)); // 0
+	5: System.out.println(Arrays.binarySearch(numbers, 4)); // 1
+	6: System.out.println(Arrays.binarySearch(numbers, 1)); // -1
+	7: System.out.println(Arrays.binarySearch(numbers, 3)); // -2
+	8: System.out.println(Arrays.binarySearch(numbers, 9)); // -5
+
+What do you think happens in this example?
+
+	5: int numbers = new int[] {3,2,1};
+	6: System.out.println(Arrays.binarySearch(numbers, 2));
+	7: System.out.println(Arrays.binarySearch(numbers, 3));
+
+The exam creators will not expect you to know what incorrect values come
+out. As soon as you see the array isn’t sorted, look for an answer choice about unpredictable
+output.
+
+## Varargs
+
+When creating an array yourself, it looks like what we’ve seen thus far. When one is passed
+to your method, there is another way it can look. Here are three examples with a main()
+method:
+
+	public static void main(String[] args)
+	public static void main(String args[])
+	public static void main(String... args) // varargs
+
+The third example uses a syntax called varargs (variable arguments), which you saw in
+Chapter 1. 
+
+All you need to know is that you can use a variable defi ned using varargs as if it were a normal array.
+ For example args.length and args[0] are legal.
+
+## Multidimensional Arrays
+
+Arrays are objects, and of course array components can be objects. It doesn’t take much
+time, rubbing those two facts together, to wonder if arrays can hold other arrays, and of
+course they can
+
+## Creating a multiDimensional Array
+
+	int[][] vars1; // 2D array
+	int vars2 [][]; // 2D array
+	int[] vars3[]; // 2D array
+	int[] vars4 [], space [][]; // a 2D AND a 3D array
+
+You can specify the size of your multidimensional array in the declaration if you like:
+
+	String [][] rectangle = new String[3][2];
+
+	rectangle[0][1] = "set";  // Put the image.
+
+While that array happens to be rectangular in shape, an array doesn’t need to be.
+Consider this one:
+
+	int[][] differentSize = {{1, 4}, {3}, {9,8,7}};	
+
+## Using a Multidimensional Array.
+
+The most common operation on a multidimensional array is to loop through it. This example
+prints out a 2D array:
+
+	int[][] twoD = new int[3][2];
+	for (int i = 0; i < twoD.length; i++) {
+		for (int j = 0; j < twoD[i].length; j++)
+	 		System.out.print(twoD[i][j] + " "); // print element
+	 		System.out.println(); // time for a new row
+	}	
+
+This entire exercise would be easier to read with the enhanced for loop.
+
+	for (int[] inner : twoD) {
+		for (int num : inner)
+			System.out.print(num + " ");
+			System.out.println();
+		}
+
+## Understanding ArrayList.
+
+An array has one glaring shortcoming: you have to know how many elements will be in the
+array when you create it and then you are stuck with that choice. Just like a StringBuilder,
+ArrayList can change size at runtime as needed. Like an array, an ArrayList is an ordered
+sequence that allows duplicates.
+
+## Creating ArrayList
+
+As with StringBuilder, there are three ways to create an ArrayList:
+
+	ArrayList list1 = new ArrayList();
+	ArrayList list2 = new ArrayList(10);
+	ArrayList list3 = new ArrayList(list2);		
+
+The new and improved way. Java 5 introduced generics, which allow you to specify the type
+of class that the ArrayList will contain.
+
+	ArrayList<String> list4 = new ArrayList<String>();
+	ArrayList<String> list5 = new ArrayList<>();	
+
+ArrayList implements an interface called List. In other
+words, an ArrayList is a List.
+
+	List<String> list6 = new ArrayList<>();
+	ArrayList<String> list7 = new List<>(); // DOES NOT COMPILE
+
+## Using ArrayList().
+
+ArrayList has many methods, but you only need to know a handful of them—even fewer
+than you did for String and StringBuilder
 
 	
-	
-		
-		

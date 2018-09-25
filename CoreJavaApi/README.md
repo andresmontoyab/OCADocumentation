@@ -1071,6 +1071,105 @@ The exam also may test to see if you remember what each of the date and time obj
 
 LocalDate does not contain time. This means you cannot add minutes to it..
 
+## Converting to Long
+
+LocalDate and LocalDateTime have a method to convert them into long equivalents in relation to 1970. What’s special about 1970? That’s what UNIX started using for date standards, so Java reused it. And don’t worry—you don’t have to memorize the names for the exam.
+
+	1.LocalDate has toEpochDay(), which is the number of days since January 1, 1970.
+	2. LocalDateTime has toEpochTime(), which is the number of seconds since January 1, 1970.
+
+
+## Working with periods.
+
+Luckily, Java has a Period class that we can pass in. This code does the same thing as the previous example:
+
+	public static void main(String[] args) {  
+		LocalDate start = LocalDate.of(2015, Month.JANUARY, 1);  
+		LocalDate end = LocalDate.of(2015, Month.MARCH, 30);  
+		Period period = Period.ofMonths(1);               // create a period  
+		performAnimalEnrichment(start, end, period); 
+	} 
+
+	private static void performAnimalEnrichment(LocalDate start, LocalDate end,   Period period) {               // uses the generic period
+		LocalDate upTo = start; 
+		while (upTo.isBefore(end)) {    
+			System.out.println("give new toy: " + upTo);    
+			upTo = upTo.plus(period);     // adds the period  
+		}
+	}
+
+There are fi ve ways to create a Period class:
+
+	Period annually = Period.ofYears(1);               // every 1 year Period quarterly = Period.ofMonths(3);               // every 3 months
+	Period everyThreeWeeks = Period.ofWeeks(3);          // every 3 weeks Period everyOtherDay = Period.ofDays(2);          // every 2 days Period everyYearAndAWeek = Period.of(1, 0, 7);          // every year and 7 days
+
+The last thing to know about Period is what objects it can be used with. Let’s look at some code:
+
+	3: LocalDate date = LocalDate.of(2015, 1, 20); 
+	4: LocalTime time = LocalTime.of(6, 15); 
+	5: LocalDateTime dateTime = LocalDateTime.of(date, time); 
+	6: Period period = Period.ofMonths(1); 
+	7: System.out.println(date.plus(period));          // 2015-02-20 
+	8: System.out.println(dateTime.plus(period));          // 2015-02-20T06:15 
+	9: System.out.println(time.plus(period));   // UnsupportedTemporalTypeException
+
+As you can see, you’ll have to pay attention to the type of date and time objects every place you see them.
+
+## Formating Dates and Time.
+
+The date and time classes support many methods to get data out of them:
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+	System.out.println(date.getDayOfWeek());     // MONDAY 
+	System.out.println(date.getMonth());          // JANUARY 
+	System.out.println(date.getYear());          // 2020 
+	System.out.println(date.getDayOfYear());     // 20
+
+DateTimeFormatter can be used to format any type of date and/or time object. What changes is the format. DateTimeFormatter is in the package java.time.format.
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	LocalTime time = LocalTime.of(11, 12, 34); 
+	LocalDateTime dateTime = LocalDateTime.of(date, time);
+	System.out.println(date .format(DateTimeFormatter.ISO_LOCAL_DATE)); 
+	System.out.println(time.format(DateTimeFormatter.ISO_LOCAL_TIME)); 
+	System.out.println(dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+ISO is a standard for dates. The output of the previous code looks like this:
+
+	2020-01-20 
+	11:12:34 
+	2020-01-20T11:12:34
+
+## Predefing Formats
+
+There are two predefi ned formats that can show up on the exam: SHORT and MEDIUM. The other predefi ned formats involve time zones, which are not on the exam.
+
+	LocalDate date = LocalDate.of(2020, Month.JANUARY, 20); 
+	LocalTime time = LocalTime.of(11, 12, 34); 
+	LocalDateTime dateTime = LocalDateTime.of(date, time);
+	DateTimeFormatter shortF = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT); 
+	DateTimeFormatter mediumF = DateTimeFormatte.ofLocalizedDateTime(FormatStyle.MEDIUM); 
+	System.out.println(shortF.format(dateTime));  // 1/20/20 11:12 AM 
+	System.out.println(mediumF.format(dateTime));   // Jan 20, 2020 11:12:34 AM
+
+## Custom Formats.
+
+If you don’t want to use one of the predefi ned formats, you can create your own. For example, this code spells out the month:
+
+	DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm"); 
+	System.out.println(dateTime.format(f));     // January 20, 2020, 11:12
+
+## Parsing Dates and Times
+
+Now that you know how to convert a date or time to a formatted String, you’ll fi nd it easy to convert a String to a date or time. Just like the format() method, the parse() method takes a formatter as well. If you don’t specify one, it uses the default for that type.
+
+	DateTimeFormatter f = DateTimeFormatter.ofPattern("MM dd yyyy"); 
+	LocalDate date = LocalDate.parse("01 02 2015", f); 
+	LocalTime time = LocalTime.parse("11:22"); 
+	System.out.println(date);          // 2015-01-02 
+	System.out.println(time);          // 11:22
+
+
 
 
 

@@ -75,6 +75,8 @@ You won’t be asked to identify whether custom classes are immutable on the exa
 	
 	String name = "Fluffy";					// This use the string pool
 	String name = new String("Fluffy");		// This dont use the string pool, create a new object even though it is less efficient.
+
+	GarbageCollector and String Pool // https://stackoverflow.com/questions/18406703/when-will-a-string-be-garbage-collected-in-java
 	
 ## Important String Methods.
 
@@ -599,10 +601,11 @@ you must have either of the following two statements in your class:
 	L System.out.print (numbers[i] + " "); // 1 6 9
 
 
-	String[] strings = { "10", "9", "100" };
-	Arrays.sort(strings);
-	for (String string : strings);
-	System.out.print(string + " ");
+	  String[] strings = { "10", "9", "100" };
+        Arrays.sort(strings);
+        for (String string : strings) {
+            System.out.print(string + " ");
+        }
 
 This time the result might not be what you expect. This code outputs 10 100 9. The
 problem is that String sorts in alphabetic order, and 1 sorts before 9.
@@ -1100,8 +1103,11 @@ Luckily, Java has a Period class that we can pass in. This code does the same th
 
 There are fi ve ways to create a Period class:
 
-	Period annually = Period.ofYears(1);               // every 1 year Period quarterly = Period.ofMonths(3);               // every 3 months
-	Period everyThreeWeeks = Period.ofWeeks(3);          // every 3 weeks Period everyOtherDay = Period.ofDays(2);          // every 2 days Period everyYearAndAWeek = Period.of(1, 0, 7);          // every year and 7 days
+	Period annually = Period.ofYears(1);               // every 1 year Period quarterly = 
+	Period.ofMonths(3);               // every 3 months
+	Period everyThreeWeeks = Period.ofWeeks(3);          // every 3 weeks 
+	Period everyOtherDay = Period.ofDays(2);          // every 2 days Period 
+	everyYearAndAWeek = Period.of(1, 0, 7);          // every year and 7 days
 
 The last thing to know about Period is what objects it can be used with. Let’s look at some code:
 

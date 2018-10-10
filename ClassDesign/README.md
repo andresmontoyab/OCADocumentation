@@ -692,3 +692,301 @@ class provides the implementation.
 4. Implementing an abstract method in a subclass follows the same rules for overriding a method. For example, the name and signature must be
 the same, and the visibility of the method in the subclass must be at least as accessible as the method in the parent class.
 
+## Implementing Interfaces.
+
+An interface is an abstract data type that defines a list of abstract public methods that any class
+implementing the interface must provide. An interface can also include a list of constant variables
+and default methods.
+
+Abstract and public, are assumed. In other words, whether or not you provide them, the compiler will automatically insert them as part of the method definition.
+
+A class may implement multiple interfaces, each separated by a comma.
+
+## Definig and Interface.
+
+It may be helpful to think of an interface as a specialized kind of abstract class, since it shares many of the same properties and rules as an abstract class
+
+1. Interfaces cannot be instantiated directly. 
+
+2. An interface is not required to have any methods. 
+
+3. An interface may not be marked as final.
+
+4. All top-level interfaces are assumed to have public or default access, and they must include the abstract modifier in their definition. Therefore, marking an interface as private, protected, or final will trigger a compiler error, since this is incompatible with these assumptions. 
+
+5. All nondefault methods in an interface are assumed to have the modifiers abstract and public in their definition. 
+
+The fourth and fi fth rule about “assumed keywords” might be new to you, but you should think of 
+these in the same light as the compiler inserting a default no-argument constructor.
+
+The following two interface definitions are equivalent, as the compiler will convert them both to the second example:
+
+	public interface CanFly {
+	  void fly(int speed);
+	  abstract void takeoff();
+	  public abstract double dive();
+	  }
+	  
+	public abstract interface CanFly {
+	  public abstract void fly(int speed);
+	  public abstract void takeoff();
+	  public abstract double dive();
+	  }
+
+## Inheriting an Interface.
+
+There are two inheritance rules you should keep in mind when extending an interface:
+
+1. An interface that extends another interface, as well as an abstract class that implements an interface, inherits all of the abstract methods as its own abstract methods. 
+
+2. The first concrete class that implements an interface, or extends an abstract class that implements an interface, must provide an implementation for all of the inherited abstract methods.
+
+Unlike an abstract class, though, an interface may extend multiple interfaces. Consider the following example:
+
+
+	public interface HasTail {  
+		public int getTailLength(); 
+		}
+		
+	public interface HasWhiskers {  
+		public int getNumberOfWhiskers(); 
+		}
+		
+	public interface Seal extends HasTail, HasWhiskers {
+	 }
+	 
+What about an abstract class that implements an interface? In this scenario, the abstract class is treated 
+in the same way as an interface extending another interface. In other words, the abstract class inherits
+the abstract methods of the interface but is not required to implement them. That said, like an abstract 
+class, the first concrete class to extend the abstract class must implement all the inherited abstract 
+methods of the interface.
+
+	public interface HasTail {  
+		public int getTailLength(); 
+	}
+
+	public interface HasWhiskers {  
+		public int getNumberOfWhiskers();
+	}
+
+	public abstract class HarborSeal implements HasTail, HasWhiskers { }
+
+	public class LeopardSeal implements HasTail, HasWhiskers {  // DOES NOT COMPILE }
+
+## Abstract Methods and Multiple Inheritance.
+
+You might be wondering what will happen if you defi ne a class that inherits from two interfaces that contain the same abstract method:
+
+	public interface Herbivore {  
+		public void eatPlants(); 
+	}
+	
+	public interface Omnivore {
+		public void eatPlants();
+		public void eatMeat();
+	}
+
+In this scenario, the signatures for the two interface methods eatPlants() are compatible, so you can defi ne a class that fulfi lls both interfaces simultaneously:
+
+	public class Bear implements Herbivore, Omnivore {  
+		public void eatMeat() {
+			System.out.println("Eating meat"); 
+		}  
+		public void eatPlants() {
+			System.out.println("Eating plants");
+			}
+		}	
+
+If two abstract interface methods have identical behaviors—or in this case the same method signature— creating a class that implements one of the 
+two methods automatically implements the second method.
+
+If the two interface have methods with the same name but different parameters, there's no problem
+because java treats these methods like overload methods.
+
+Unfortunately, if the method name and input parameters are the same but the return types are different between the two methods, 
+the class or interface attempting to inherit both interfaces will not compile.
+
+	public interface Herbivore {
+	  public int eatPlants();
+	  }
+
+	public interface Omnivore {
+	  public void eatPlants();
+	  }
+	  
+	public class Bear implements Herbivore, Omnivore {
+	  public int eatPlants() {  // DOES NOT COMPILE    
+		System.out.println("Eating plants: 10");
+		return 10;  
+			} 
+
+		public void eatPlants() {  // DOES NOT COMPILE    
+			System.out.println("Eating plants");  
+			} 
+	}
+	
+## Interface Variables.
+
+Unlike interface methods, though, interface variables are also assumed to be static and final. 
+Here are two interface variables rules:
+
+1. Interface variables are assumed to be public, static, and final. Therefore, marking a variable as private 
+or protected will trigger a compiler error, as will marking any variable as abstract. 
+
+2. The value of an interface variable must be set when it is declared since it is marked as final.
+
+The following two interface definitions are equivalent, because the compiler will automatically 
+convert them both to the second example:
+
+	public interface CanSwim {  
+		int MAXIMUM_DEPTH = 100;  
+		final static boolean UNDERWATER = true;  
+		public static final String TYPE = "Submersible"; 
+	}
+	
+	public interface CanSwim {  
+		public static final int MAXIMUM_DEPTH = 100;  
+		public static final boolean UNDERWATER = true;  
+		public static final String TYPE = "Submersible"; 
+	}
+	
+## Default Interface Methods.
+
+A default method within an interface defines an abstract method with a default implementation. 
+In this manner, classes have the option to override the default method if they need to, but they 
+are not required to do so. If the class doesn’t override the method, the default implementation 
+will be used. 
+
+The purpose of adding default methods to the Java language was in part to help with code development
+and backward compatibility. Imagine you have an interface that is shared among dozens or even 
+hundreds of users that you would like to add a new method to. If you just update the interface 
+with the new method, the implementation would break among all of your subscribers, who would then 
+be forced to update their code. In practice, this might even discourage you from making the change
+altogether. By providing a default implementation of the method, though, the interface becomes 
+backward compatible with the existing codebase, while still providing those individuals who do 
+want to use the new method with the option to override it. 
+
+	public interface IsWarmBlooded {  
+		boolean hasScales();  
+		public default double getTemperature() {    
+			return 10.0;  
+			} 
+		}
+		
+The following are the default interface method rules you need to be familiar with:
+
+1. A default method may only be declared within an interface and not within a class or abstract class.
+
+2. A default method must be marked with the default keyword. If a method is marked as default, 
+it must provide a method body. 
+
+3. A default method is not assumed to be static, final, or abstract, as it may be used or 
+overridden by a class that implements the interface.
+
+4. Like all methods in an interface, a default method is assumed to be public and will not 
+compile if marked as private or protected.
+
+Unlike interface variables, which are assumed static class members, default methods cannot be marked 
+as static and require an instance of the class implementing the interface to be invoked. 
+They can also not be marked as final or abstract, because they are allowed to be overridden in 
+subclasses but are not required to be overridden. 
+
+When an interface extends another interface that contains a default method, it may choose to ignore
+the default method, in which case the default implementation for the method will be used. 
+Alternatively, the interface may override the definition of the default method using the standard
+rules for method overriding, such as not limiting the accessibility of the method and using 
+covariant returns. Finally, the interface may redeclare the method as abstract, requiring 
+classes that implement the new interface to explicitly provide a method body. Analogous options 
+apply for an abstract class that implements an interface
+ 
+	public interface HasFins {  
+		public default int getNumberOfFins() {
+		return 4;  
+		}  
+		
+		public default double getLongestFinLength() {
+		return 20.0;  
+		}  
+		
+		public default boolean doFinsHaveScales() {
+		return true;  
+		} 
+		
+	}
+	
+public interface SharkFamily extends HasFins {
+  public default int getNumberOfFins() { // Overriden the default method getNumberOfFins.
+  return 8;  
+  }  
+  
+  public double getLongestFinLength(); // Here is overriden the default method to a abstrac method
+
+  public boolean doFinsHaveScales() {  // DOES NOT COMPILE    
+  return false;  }
+  }
+ 
+## Default Methods and Multiple Inheritance.
+
+If a class implements two interfaces that have default methods with the same name and signature, 
+the compiler will throw an error. There is an exception to this rule, though: if the subclass 
+overrides the duplicate default methods, the code will compile without issue.
+
+	public interface Walk {  
+	public default int getSpeed() {
+		return 5;  
+		} 
+	}
+
+	public interface Run {  
+	public default int getSpeed() {
+		return 10;  
+		} 
+	}
+
+	public class Cat implements Walk, Run {    
+	public int getSpeed() {    
+		return 1;  
+		}
+
+	public static void main(String[] args) {    
+		System.out.println(new Cat().getSpeed());  
+		} 
+	}
+	
+	public class Dog implements Walk, Run {  // DOES NOT COMPILE  
+		public static void main(String[] args) {    
+		System.out.println(new Cat().getSpeed());  
+		} 
+	}
+
+## Static Interface Methods.
+
+In fact, there is really only one distinction between a static method in a class and an interface
+.A static method defined in an interface is not inherited in any classes that implement the interface. 
+
+Here are the static interface method rules you need to be familiar with: 
+
+1. Like all methods in an interface, a static method is assumed to be public and will not compile 
+if marked as private or protected. 
+
+2. To reference the static method, a reference to the name of the interface must be used.
+
+	public interface Hop {  
+	static int getJumpHeight() {
+		return 8;  
+		} 
+	}
+	
+It follows, then, that a class that implements two interfaces containing static methods with the 
+same signature will still compile at runtime, because the static methods are not inherited by the 
+subclass and must be accessed with a reference to the interface name. 
+
+
+
+
+ 
+
+
+ 
+ 
+

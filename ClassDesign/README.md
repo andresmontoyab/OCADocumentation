@@ -981,6 +981,55 @@ It follows, then, that a class that implements two interfaces containing static 
 same signature will still compile at runtime, because the static methods are not inherited by the 
 subclass and must be accessed with a reference to the interface name. 
 
+## Understanding Polymorphism.
+
+The property of an object to take on many different forms.To put this more precisely, a Java object
+may be accessed using a reference with the same type as the object, a reference that is a superclass
+of the object, or a reference that defines an interface the object implements, either directly 
+or through a superclass. 
+
+	public class Primate {  
+
+	public boolean hasHair() {
+			return true;  
+			}
+	}
+
+	public interface HasTail {  
+	
+	public boolean isTailStriped(); 
+	}
+	
+	public class Lemur extends Primate implements HasTail {  
+
+	public boolean isTailStriped() {    
+	return false;  
+	}  
+
+	public int age = 10;  
+
+	public static void main(String[] args) {    
+		Lemur lemur = new Lemur();    
+		System.out.println(lemur.age);
+		HasTail hasTail = lemur;    
+		System.out.println(hasTail.isTailStriped());
+		Primate primate = lemur;    
+		System.out.println(primate.hasHair());    
+		}
+	}
+
+the output is !
+
+10
+false
+true
+
+The ability of an instance of Lemur to be passed as an instance of an interface it implements, 
+HasTail, as well as an instance of one of its superclasses, Primate, is the nature of polymorphism.
+
+## Object Vs Reference.
+
+ 
 
 
 
